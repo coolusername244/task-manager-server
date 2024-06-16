@@ -17,12 +17,16 @@ builder.Services.AddDbContext<DataContext>(options =>
   options.UseSqlite(connectionString);
 });
 
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
 
 app.MapControllers();
 
