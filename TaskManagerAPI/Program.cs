@@ -1,33 +1,22 @@
 using TaskManagerAPI.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using TaskManagerAPI.Interfaces;
+using TaskManagerAPI.Services;
+using TaskManagerAPI.Extensions;
 using DotNetEnv;
 
 Env.Load();
-var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
-
-// Connect to SQLite database
-builder.Services.AddDbContext<DataContext>(options =>
-{
-  options.UseSqlite(connectionString);
-});
-
-builder.Services.AddCors();
+builder.Services.AddApplicationServices();
+builder.Services.AddIdentityServices();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
